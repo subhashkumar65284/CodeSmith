@@ -7,12 +7,14 @@ const userSchema = new Schema({
     firstName:{
         type:String,
         required:true,
+        trim:true,
         minLength:3,
         maxLength:20
     },
     lastName:{
         type:String,
         minLength:3,
+        trim:true,
         maxLength:20
     }, 
     email:{
@@ -23,14 +25,20 @@ const userSchema = new Schema({
         unique:true
     },
     problemSolved:{
-        type:[string]
+        type:[String]
     },
     role:{
         type:String,
         enum:["user","admin"],
         default:"user"
+    },
+    password:{
+        type:String,
+        trim:true,
+        required:true
     }
 
 },{timestamps:true})
 
-const User = mongoose.connect("users",userSchema);
+const User = mongoose.model("users",userSchema);
+module.exports = User;
