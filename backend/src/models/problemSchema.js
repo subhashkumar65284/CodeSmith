@@ -7,6 +7,7 @@ const problemSchema = new Schema(
     title: {
       type: String,
       required: true,
+      unique:true
     },
     description: {
       type: String,
@@ -15,9 +16,10 @@ const problemSchema = new Schema(
     difficulty: {
       type: String,
       enum: ["easy", "medium", "hard"],
+      required:true
     },
     topics: {
-      type: String,
+      type: [String],
       enum: [
         "arrays",
         "linked list",
@@ -31,7 +33,9 @@ const problemSchema = new Schema(
         "backtracking",
         "stack",
         "queue",
+        "sorting"
       ],
+      required:true
     },
     visibleTestCase: [{
       input: {
@@ -43,7 +47,7 @@ const problemSchema = new Schema(
         required: true,
       },
       explanation: {
-        type: true,
+        type: String,
         required: true,
       },
     }],
@@ -60,6 +64,7 @@ const problemSchema = new Schema(
     initialCode:[{
         language:{
             type:String,
+            enum:["java","cpp","python"],
             required:true
         },
         boilerPlate:{
@@ -67,13 +72,25 @@ const problemSchema = new Schema(
             required:true
         }
     }],
+    acceptedCode:[{
+      language:{
+        type:String,
+        enum:["java","cpp","python"],
+        required:true
+      },
+      code:{
+        type:String,
+        required:true
+      }
+    }],
+    
     problemCreator:{
         type:Schema.Types.ObjectId,
         required:true,
         ref:'user'
     }
-  },
-  { timestamps: true },
-);
 
-module.exports = problemSchema;
+  },{ timestamps: true });
+
+  const Problem = mongoose.model("problems",problemSchema);
+  module.exports = Problem;
