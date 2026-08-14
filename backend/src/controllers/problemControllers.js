@@ -12,16 +12,16 @@ const createProblem = async (req, res) => {
     topics,
     visibleTestCase,
     hiddenTestCase,
-    initialCode,
-    problemCreator,
-    acceptedCode,
+    boilerPlateCode,
+    referenceSolution,
   } = req.body;
 
-  //Saving a code to db directly -> not a good choice
-  //check with the visible testcases
   try {
     let isValid = true;
-    for (const { language, code } of acceptedCode) {
+    let validationError = null;
+
+    for (const { language, code } of referenceSolution) {
+
       const submissions = {
         language: language,
         stdin: visibleTestCase.map(({ input }) => input),
@@ -36,13 +36,33 @@ const createProblem = async (req, res) => {
       const submitResult = await submitBatch(submissions);
 
       const languageValid = submitResult.every((result, index) => {
-        if (result.status !== "success") return false;
 
-        if (result.stderr !== null) return false;
+        if (result.status !== "success") {
+          validationError = `Submission failed for ${language}`;
+          return false;
+        }
 
-        if (result.exception !== null) return false;
+        if (result.stderr !== null) {
+          validationError =
+            `Error in ${language}, test case ${index + 1}: ${result.stderr}`;
+          return false;
+        }
 
-        if (result.stdout?.trim() !== visibleTestCase[index].output.trim()) {
+        if (result.exception !== null) {
+          validationError =
+            `Exception in ${language}, test case ${index + 1}: ${result.exception}`;
+          return false;
+        }
+
+        if (
+          result.stdout?.trim() !==
+          visibleTestCase[index].output.trim()
+        ) {
+          validationError =
+            `Wrong output in ${language}, test case ${index + 1}. ` +
+            `Expected: ${visibleTestCase[index].output}, ` +
+            `Got: ${result.stdout}`;
+
           return false;
         }
 
@@ -54,14 +74,30 @@ const createProblem = async (req, res) => {
         break;
       }
     }
-    if (isValid) {
-      req.body.problemCreator = req.user._id;
-      await Problem.create(req.body);
-      res.status(201).send("Problem created successfully!");
-    } else 
-      throw new Error("Error creating Problem");
+
+    if (!isValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Problem validation failed",
+        error: validationError,
+      });
+    }
+
+    req.body.problemCreator = req.user._id;
+
+    await Problem.create(req.body);
+
+    res.status(201).json({
+      success: true,
+      message: "Problem created successfully!",
+    });
+
   } catch (err) {
-    res.send("Error Occured : " + err);
+    res.status(500).json({
+      success: false,
+      message: "Error creating problem",
+      error: err.message,
+    });
   }
 };
 

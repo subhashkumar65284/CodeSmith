@@ -15,12 +15,13 @@ const problemSchema = new Schema(
     },
     difficulty: {
       type: String,
-      enum: ["easy", "medium", "hard"],
+      enum: ["basic","easy", "medium", "hard"],
       required:true
     },
     topics: {
       type: [String],
       enum: [
+        "math",
         "arrays",
         "linked list",
         "trees",
@@ -61,7 +62,7 @@ const problemSchema = new Schema(
         required: true,
       },
     }],
-    initialCode:[{
+    boilerPlateCode:[{
         language:{
             type:String,
             enum:["java","cpp","python"],
@@ -72,7 +73,7 @@ const problemSchema = new Schema(
             required:true
         }
     }],
-    acceptedCode:[{
+    referenceSolution:[{
       language:{
         type:String,
         enum:["java","cpp","python"],
