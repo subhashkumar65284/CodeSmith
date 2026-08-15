@@ -38,7 +38,7 @@ const problemSchema = new Schema(
       ],
       required:true
     },
-    visibleTestCase: [{
+    visibleTestCases: [{
       input: {
         type: String,
         required: true,
@@ -52,7 +52,7 @@ const problemSchema = new Schema(
         required: true,
       },
     }],
-    hiddenTestCase: [{
+    hiddenTestCases: [{
       input: {
         type: String,
         required: true,

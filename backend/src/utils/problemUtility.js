@@ -1,5 +1,6 @@
 require('dotenv').config();
 const axios = require("axios");
+const { validate } = require('../models/userSchema');
 
 const getFileNameByLanguage = (language) => {
     const files  = {
@@ -36,4 +37,13 @@ async function fetchData() {
 return await fetchData();
 }
 
-module.exports = {getFileNameByLanguage,submitBatch};
+const validateTestCases = (referenceSolution, visibleTestCases) => {
+  if(!referenceSolution || referenceSolution.length==0){
+      throw new Error("Please check for the Reference Solution!");
+    }
+    if(!visibleTestCases || visibleTestCases.length==0){
+      throw new Error("Atleast one testCase is Required!");
+    }
+}
+
+module.exports = {getFileNameByLanguage,submitBatch,validateTestCases};
