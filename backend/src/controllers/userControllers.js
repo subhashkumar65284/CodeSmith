@@ -31,9 +31,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     validateLogin(req.body);
-    const { firstName, email, password } = req.body;
-    //password hashing (can salt for even more security);
-    req.body.password = await bcrypt.hash(password, 10);
+    const {email, password } = req.body;
 
     const user = await User.findOne({ email: email });
     const token = jwt.sign(
@@ -64,7 +62,7 @@ const logout = async (req, res) => {
 const adminRegister = async(req,res) =>{
     try {
     validateReg(req.body);
-    const { firstName, email, password } = req.body;
+    const { email, password } = req.body;
     //password hashing (can salt for even more security);
     req.body.password = await bcrypt.hash(password, 10);
 

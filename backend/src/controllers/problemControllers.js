@@ -1,4 +1,4 @@
-const axios = require("axios");
+// const axios = require("axios");
 const {
   getFileNameByLanguage,
   submitBatch,
@@ -17,7 +17,7 @@ const createProblem = async (req, res) => {
     boilerPlateCode,
     referenceSolution,
   } = req.body;
-  
+
   try {
     let isValid = true;
     let validationError = null;
@@ -99,8 +99,8 @@ const createProblem = async (req, res) => {
 
 const updateProblem = async (req, res) => {
   const { id } = req.params;
-  
-  if(!id){
+
+  if (!id) {
     return res.status(400).send("Problem id is Required!");
   }
 
@@ -177,7 +177,10 @@ const updateProblem = async (req, res) => {
       });
     }
 
-    await Problem.findByIdAndUpdate(id, req.body, {returnDocument: "after",runValidators: true,});
+    await Problem.findByIdAndUpdate(id, req.body, {
+      returnDocument: "after",
+      runValidators: true,
+    });
 
     res.status(201).json({
       success: true,
@@ -193,25 +196,63 @@ const updateProblem = async (req, res) => {
 };
 
 const deleteProblem = async (req, res) => {
-  try{
-    const {id} = req.params;
+  try {
+    const { id } = req.params;
 
-  if(!id){
-    return res.status(400).send("Problem id is Required");
+    if (!id) {
+      return res.status(400).send("Problem id is Required");
+    }
+
+    const deletedProblem = await Problem.findByIdAndDelete(id);
+
+    if (!deletedProblem) {
+      return res.status(404).send("No Such Problem found!");
+    }
+
+    res.status(200).send("Problem deleted Successfully");
+  } catch (err) {
+    res.status(500).send("Error: " + err);
   }
-    
-
-  const deletedProblem = await Problem.findByIdAndDelete(id);
-
-  if(!deletedProblem){
-    return res.status(404).send("No Such Problem found!");
-  }
-
-  res.status(200).send("Problem deleted Successfully");
-  }catch(err){
-      res.status(500).send("Error: " + err);
-  }
-  
 };
 
-module.exports = { createProblem, updateProblem, deleteProblem};
+const getProblemById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).send("Problem id is Required");
+    }
+
+    const foundProblem = await Problem.findById(id).select('-hiddenTestCases -referenceSolution');
+
+    if (!foundProblem) {
+      return res.status(404).send("No Such Problem found!");
+    }
+
+    res.status(200).send(foundProblem);
+  } catch (err) {
+    res.status(500).send("Error: " + err);
+  }
+};
+
+const getAllProblems = async (req, res) => {
+  try {
+    const Problems = await Problem.find({}).select('_id title difficulty');
+
+    if (Problems.length === 0) {
+      res.status(404).send("Problems not found");
+    }
+
+    res.status(200).send(Problems);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+};
+
+module.exports = {
+  createProblem,
+  updateProblem,
+  deleteProblem,
+  getProblemById,
+  getAllProblems,
+};

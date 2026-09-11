@@ -7,7 +7,7 @@ const problemSchema = new Schema(
     title: {
       type: String,
       required: true,
-      unique:true
+      unique: true,
     },
     description: {
       type: String,
@@ -15,8 +15,8 @@ const problemSchema = new Schema(
     },
     difficulty: {
       type: String,
-      enum: ["basic","easy", "medium", "hard"],
-      required:true
+      enum: ["basic", "easy", "medium", "hard"],
+      required: true,
     },
     topics: {
       type: [String],
@@ -34,64 +34,71 @@ const problemSchema = new Schema(
         "backtracking",
         "stack",
         "queue",
-        "sorting"
+        "sorting",
       ],
-      required:true
+      required: true,
     },
-    visibleTestCases: [{
-      input: {
-        type: String,
-        required: true,
-      },
-      output: {
-        type: String,
-        required: true,
-      },
-      explanation: {
-        type: String,
-        required: true,
-      },
-    }],
-    hiddenTestCases: [{
-      input: {
-        type: String,
-        required: true,
-      },
-      output: {
-        type: String,
-        required: true,
-      },
-    }],
-    boilerPlateCode:[{
-        language:{
-            type:String,
-            enum:["java","cpp","python"],
-            required:true
+    visibleTestCases: [
+      {
+        input: {
+          type: String,
+          required: true,
         },
-        boilerPlate:{
-            type:String,
-            required:true
-        }
-    }],
-    referenceSolution:[{
-      language:{
-        type:String,
-        enum:["java","cpp","python"],
-        required:true
+        output: {
+          type: String,
+          required: true,
+        },
+        explanation: {
+          type: String,
+          required: true,
+        },
       },
-      code:{
-        type:String,
-        required:true
-      }
-    }],
-    
-    problemCreator:{
-        type:Schema.Types.ObjectId,
-        required:true,
-        ref:'user'
-    }
+    ],
+    hiddenTestCases: [
+      {
+        input: {
+          type: String,
+          required: true,
+        },
+        output: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+    boilerPlateCode: [
+      {
+        language: {
+          type: String,
+          enum: ["java", "cpp", "python"],
+          required: true,
+        },
+        boilerPlate: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+    referenceSolution: [
+      {
+        language: {
+          type: String,
+          enum: ["java", "cpp", "python"],
+          required: true,
+        },
+        code: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+    problemCreator: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "user",
+    },
+  },{ timestamps: true },
+);
 
-  },{ timestamps: true });
-
-  const Problem = mongoose.model("problems",problemSchema);
-  module.exports = Problem;
+const Problem = mongoose.model("problems", problemSchema);
+module.exports = Problem;
