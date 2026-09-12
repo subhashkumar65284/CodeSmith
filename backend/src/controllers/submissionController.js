@@ -95,7 +95,7 @@ const submitProblem = async (req, res) => {
     submittedCode.status = "accepted";
     await submittedCode.save();
 
-    res.status(201).send("Submission done!");
+    res.status(201).send(submittedCode);
   } catch (err) {
     res.status(500).send("Internal server error : " + err);
   }
