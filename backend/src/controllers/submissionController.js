@@ -1,0 +1,116 @@
+const Submission = require("../models/submissionSchema");
+const Problem = require("../models/problemSchema");
+const { getSubmissions, submitBatch } = require("../utils/problemUtility");
+
+const submitProblem = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const problemId = req.params.id;
+    const { code, language } = req.body;
+    let validationError = null;
+    let testcasesPassed = 0;
+    let runtime = 0;
+    let memory = 0;
+
+    if (!userId || !problemId || !code || !language) {
+      return res.status(400).send("Field(s) is/are missing!");
+    }
+
+    const foundProblem = await Problem.findById(problemId);
+
+    if (!foundProblem) {
+      return res.status(404).send("Problem not found");
+    }
+
+    //A pending state submission (in case of oneCompiler server failure) for no loss of submission info
+    const submittedCode = await Submission.create({
+      userId,
+      problemId,
+      code,
+      language,
+      status: "pending",
+      totalTestcases: foundProblem.hiddenTestCases.length,
+      runtime: 0,
+      memory: 0,
+      testcasesPassed: 0,
+      errMessage: "",
+    });
+
+    const { hiddenTestCases } = foundProblem;
+
+    const submissions = getSubmissions(hiddenTestCases, language, code);
+
+    const submitResult = await submitBatch(submissions);
+
+    // Calculate resource usage from all results
+    submitResult.forEach((result) => {
+      runtime = Math.max(runtime, result.executionTime);
+      memory = Math.max(memory, result.memoryUsed / 1024);
+    });
+
+    memory = Number(memory.toFixed(2));
+
+    // Validate submission
+    const languageValid = submitResult.every((result, index) => {
+      if (result.status !== "success") {
+        validationError = `Submission failed for ${language}`;
+        return false;
+      }
+
+      if (result.stderr !== null) {
+        validationError = `Error in ${language}, test case ${index + 1}: ${result.stderr}`;
+        return false;
+      }
+
+      if (result.exception !== null) {
+        validationError = `Exception in ${language}, test case ${index + 1}: ${result.exception}`;
+        return false;
+      }
+
+      if (result.stdout?.trim() !== hiddenTestCases[index].output.trim()) {
+        validationError =
+          `Wrong output in ${language}, test case ${index + 1}. ` +
+          `Expected: ${hiddenTestCases[index].output}, ` +
+          `Got: ${result.stdout}`;
+
+        return false;
+      }
+
+      testcasesPassed++;
+      return true;
+    });
+
+    submittedCode.errMessage = validationError;
+    submittedCode.runtime = runtime;
+    submittedCode.memory = memory;
+    submittedCode.testcasesPassed = testcasesPassed;
+
+    if (!languageValid) {
+      submittedCode.status = "failed";
+      await submittedCode.save();
+
+      return res.status(200).send("Submission failed");
+    }
+
+    submittedCode.status = "accepted";
+    await submittedCode.save();
+
+    res.status(201).send("Submission done!");
+  } catch (err) {
+    res.status(500).send("Internal server error : " + err);
+  }
+};
+
+module.exports = submitProblem;
+
+//An example of submission result by onecompiler
+// {
+//     status: 'success',   //ye hamesha 'success' hi aata hai agar server failure naa hua toh
+//     exception: null,     // ye dega tle , mle etc
+//     stdout: '50\n',
+//     stderr: null,        //compilation error etc
+//     compilationTime: 0,
+//     executionTime: 12,
+//     memoryUsed: 9816,
+//     stdin: '20 30'
+//   }

@@ -1,6 +1,5 @@
 require('dotenv').config();
 const axios = require("axios");
-const { validate } = require('../models/userSchema');
 
 const getFileNameByLanguage = (language) => {
     const files  = {
@@ -14,7 +13,7 @@ const getFileNameByLanguage = (language) => {
 }
 
 const submitBatch = async(submissions) => {
-    const options = {
+  const options = {
   method: 'POST',
   url: process.env.RAPID_API_URL,
   headers: {
@@ -45,6 +44,20 @@ const validateTestCases = (referenceSolution, visibleTestCases) => {
       throw new Error("Atleast one testCase is Required!");
     }
 }
+const getSubmissions = (testcases,language,code) => {
+  return {
+    language: language,
+        stdin: testcases.map(({ input }) => input),
+        files: [
+          {
+            name: getFileNameByLanguage(language),
+            content: code,
+          },
+        ],
+      }
+
+}
 
 
-module.exports = {getFileNameByLanguage,submitBatch,validateTestCases};
+
+module.exports = {getFileNameByLanguage,submitBatch,validateTestCases,getSubmissions};

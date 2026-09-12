@@ -3,19 +3,14 @@ const {
   getFileNameByLanguage,
   submitBatch,
   validateTestCases,
+  getSubmissions
 } = require("../utils/problemUtility");
 const Problem = require("../models/problemSchema");
 
 const createProblem = async (req, res) => {
   const {
-    title,
-    description,
-    difficulty,
-    topics,
     visibleTestCases,
-    hiddenTestCases,
-    boilerPlateCode,
-    referenceSolution,
+    referenceSolution
   } = req.body;
 
   try {
@@ -25,16 +20,9 @@ const createProblem = async (req, res) => {
     validateTestCases(referenceSolution, visibleTestCases);
 
     for (const { language, code } of referenceSolution) {
-      const submissions = {
-        language: language,
-        stdin: visibleTestCases.map(({ input }) => input),
-        files: [
-          {
-            name: getFileNameByLanguage(language),
-            content: code,
-          },
-        ],
-      };
+
+      //submissions is for batch submission
+      const submissions = getSubmissions(visibleTestCases,language,code);
 
       const submitResult = await submitBatch(submissions);
 
@@ -84,6 +72,7 @@ const createProblem = async (req, res) => {
 
     await Problem.create(req.body);
 
+
     res.status(201).json({
       success: true,
       message: "Problem created successfully!",
@@ -122,16 +111,8 @@ const updateProblem = async (req, res) => {
     validateTestCases(referenceSolution, visibleTestCases);
 
     for (const { language, code } of referenceSolution) {
-      const submissions = {
-        language: language,
-        stdin: visibleTestCases.map(({ input }) => input),
-        files: [
-          {
-            name: getFileNameByLanguage(language),
-            content: code,
-          },
-        ],
-      };
+      
+      const submissions = getSubmissions(visibleTestCases,language,code);
 
       const submitResult = await submitBatch(submissions);
 

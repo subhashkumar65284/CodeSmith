@@ -20,22 +20,6 @@ const problemSchema = new Schema(
     },
     topics: {
       type: [String],
-      enum: [
-        "math",
-        "arrays",
-        "linked list",
-        "trees",
-        "priority queue",
-        "heap",
-        "hash table",
-        "hash map",
-        "dynamic programming",
-        "graphs",
-        "backtracking",
-        "stack",
-        "queue",
-        "sorting",
-      ],
       required: true,
     },
     visibleTestCases: [
