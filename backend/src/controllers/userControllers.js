@@ -78,5 +78,23 @@ const adminRegister = async(req,res) =>{
     res.send("Error : " + err);
   }
 }
+const userProfile = async(req,res) => {
+  try {
+        const user = await req.user.populate({
+            path: "problemSolved",
+            select: "-_id title difficulty topics"
+        });
 
-module.exports = { register, login, logout, adminRegister }; 
+        res.status(200).json({
+          name: `${req.user.firstName} ${req.user.lastName}`,
+          email:user.email,
+          problemsSolved: user.problemSolved,
+          role:user.role
+        })
+
+    } catch (err) {
+        res.status(500).send("Internal Server Error : "  + err);
+    }
+};
+
+module.exports = { register, login, logout, adminRegister, userProfile}; 

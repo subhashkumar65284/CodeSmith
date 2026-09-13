@@ -95,13 +95,58 @@ const submitProblem = async (req, res) => {
     submittedCode.status = "accepted";
     await submittedCode.save();
 
+    //if accepted then let us save it to the problemsSolvedByUser in the userSchema
+    // req.user refers to the user in the schema
+    if(!req.user.problemSolved.includes(problemId)){
+      req.user.problemSolved.push(problemId);
+      await req.user.save();
+    }
+
     res.status(201).send(submittedCode);
   } catch (err) {
     res.status(500).send("Internal server error : " + err);
   }
 };
 
-module.exports = submitProblem;
+const runProblem = async (req,res) => {
+  try {
+    const userId = req.user._id;
+    const problemId = req.params.id;
+    const { code, language } = req.body;
+
+    if (!userId || !problemId || !code || !language) {
+      return res.status(400).send("Field(s) is/are missing!");
+    }
+
+    const foundProblem = await Problem.findById(problemId);
+
+    if (!foundProblem) {
+      return res.status(404).send("Problem not found");
+    }
+
+
+    const { visibleTestCases } = foundProblem;
+
+    const submissions = getSubmissions(visibleTestCases, language, code);
+
+    const submitResult = await submitBatch(submissions);
+    
+    submitResult.forEach((result, index) => {
+      if(result.stdout?.trim() !== visibleTestCases[index].output.trim()) {
+        result.stderr = 
+          `Wrong Answer` +
+          `Expected: ${visibleTestCases[index].output}, ` +
+          `Got: ${result.stdout}`;
+      }
+    });
+
+    res.status(201).send(submitResult);
+  } catch (err) {
+    res.status(500).send("Internal server error : " + err);
+  } 
+};
+
+module.exports = {submitProblem,runProblem};
 
 //An example of submission result by onecompiler
 // {

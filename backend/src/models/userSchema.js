@@ -24,7 +24,11 @@ const userSchema = new Schema({
         unique:true
     },
     problemSolved:{
-        type:[String]
+        type:[{
+            type:Schema.Types.ObjectId,
+            ref:'problems',
+            unique:true
+        }]
     },
     role:{
         type:String,

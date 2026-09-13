@@ -13,7 +13,6 @@ authRoute.post("/login",login);
 authRoute.post("/logout",userMiddleware,logout);
 //admin Register
 authRoute.post("/admin/register",adminMiddleware,adminRegister);
-// //My Profile
-// authRoute.get("/myProfile",myProfile);
+
 
 module.exports = authRoute
