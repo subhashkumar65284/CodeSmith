@@ -5,6 +5,7 @@ const redisClient = require("../config/redis");
 require("dotenv").config();
 const validateReg = require("../utils/validateReg");
 const validateLogin = require("../utils/validateLogin");
+const Submission = require("../models/submissionSchema");
 
 const register = async (req, res) => {
   try {
@@ -18,7 +19,7 @@ const register = async (req, res) => {
 
     const user = await User.create(req.body);
     const token = jwt.sign(
-      { _id: user._id, email: email , role:user.role},
+      { _id: user._id, email: email, role: user.role },
       process.env.JWT_KEY,
       { expiresIn: 3600 },
     );
@@ -31,11 +32,11 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     validateLogin(req.body);
-    const {email, password } = req.body;
+    const { email, password } = req.body;
 
     const user = await User.findOne({ email: email });
     const token = jwt.sign(
-      { _id: user._id, email: email ,role:user.role},
+      { _id: user._id, email: email, role: user.role },
       process.env.JWT_KEY,
       { expiresIn: 3600 },
     );
@@ -59,8 +60,8 @@ const logout = async (req, res) => {
     res.send("Error : " + err);
   }
 };
-const adminRegister = async(req,res) =>{
-    try {
+const adminRegister = async (req, res) => {
+  try {
     validateReg(req.body);
     const { email, password } = req.body;
     //password hashing (can salt for even more security);
@@ -68,33 +69,57 @@ const adminRegister = async(req,res) =>{
 
     const user = await User.create(req.body);
     const token = jwt.sign(
-      { _id: user._id, email: email, role:user.role },
+      { _id: user._id, email: email, role: user.role },
       process.env.JWT_KEY,
       { expiresIn: 3600 },
     );
     res.cookie("token", token, { maxAge: 3600 * 1000 });
-    res.status(201).send("User Registered Successfully!"); 
+    res.status(201).send("User Registered Successfully!");
   } catch (err) {
     res.send("Error : " + err);
   }
-}
-const userProfile = async(req,res) => {
+};
+const userProfile = async (req, res) => {
   try {
-        const user = await req.user.populate({
-            path: "problemSolved",
-            select: "-_id title difficulty topics"
-        });
+    const user = await req.user.populate({
+      path: "problemSolved",
+      select: "-_id title difficulty topics",
+    });
 
-        res.status(200).json({
-          name: `${req.user.firstName} ${req.user.lastName}`,
-          email:user.email,
-          problemsSolved: user.problemSolved,
-          role:user.role
-        })
+    res.status(200).json({
+      name: `${req.user.firstName} ${req.user.lastName}`,
+      email: user.email,
+      problemsSolved: user.problemSolved,
+      role: user.role,
+    });
+  } catch (err) {
+    res.status(500).send("Internal Server Error : " + err);
+  }
+};
+const problemSubmissions = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const problemId = req.params.pid;
 
-    } catch (err) {
-        res.status(500).send("Internal Server Error : "  + err);
+    const submissions = await Submission.find({ userId, problemId });
+
+    if (submissions.length == 0) {
+      return res.status(404).json({
+        message: "No submissions for this problem",
+      });
     }
+
+    res.status(200).send(submissions);
+  } catch (err) {
+    res.status(500).send("Internal Server Error");
+  }
 };
 
-module.exports = { register, login, logout, adminRegister, userProfile}; 
+module.exports = {
+  register,
+  login,
+  logout,
+  adminRegister,
+  userProfile,
+  problemSubmissions,
+};
