@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" width="100%" height="100%">
+  <defs>
+<!--Premium metallic gradient for the anvil body-->
+    <linearGradient id="metalGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+  </defs>
+<!--The Heavy Anvil Body (Top flat surface, horn, and heel)-->
+  <path d="M 20,45 L 170,45 L 170,70 L 130,70 L 115,115 L 85,115 L 70,70 Z" fill="url(#metalGradient)" stroke="#00B6C4" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
+<!--The Code Bracket Foundation (</>)-->
+  <g stroke="#C7AE56" stroke-width="16" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<!--Left Bracket: <-->
+    <path d="M 75,130 L 45,150 L 75,170"/>
+<!--Forward Slash: / (Acting as the central support pillar)-->
+    <path d="M 90,170 L 110,130"/>
+<!--Right Bracket: >-->
+    <path d="M 125,130 L 155,150 L 125,170"/>
+  </g>
+</svg>
