@@ -9,7 +9,7 @@ function App() {
   return (
     <>
     <Navbar/>
-    <main className="min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center">
+    <main className="min-h-[calc(100vh-4rem)] flex flex-col justify-center items-centermin-h-screen bg-[url('/background.jpg')] bg-cover bg-center bg-no-repeat">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />

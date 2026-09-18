@@ -1,7 +1,7 @@
 export default function Navbar() {
   return (
-    <div className="navbar shadow-sm flex-row justify-between sticky top-0 z-50">
-      <div className="w-6 shrink-0 flex justify-around">
+    <div className="navbar glass shadow-sm flex-row justify-between sticky top-0 z-50">
+      <div className="w-8 shrink-0 flex justify-around">
         <img
           alt=""
           src="favicon.svg"
@@ -28,7 +28,7 @@ export default function Navbar() {
             <div className="w-10 rounded-full">
               <img
                 alt="Profile"
-                src="/user-icon.svg"
+                src="src/assets/user-icon.svg"
               />
             </div>
           </div>
