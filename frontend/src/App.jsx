@@ -1,4 +1,4 @@
-import { Routes, Route} from 'react-router';
+import { Routes, Route } from 'react-router';
 import Home from './pages/Home';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
@@ -8,14 +8,14 @@ function App() {
 
   return (
     <>
-    <Navbar/>
-    <main className="min-h-[calc(100vh-4rem)] flex flex-col justify-center items-centermin-h-screen bg-[url('/background.jpg')] bg-cover bg-center bg-no-repeat">
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="login" element={<Login />} />
-      </Routes>
-    </main>
+      <Navbar />
+      <main className="min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="login" element={<Login />} />
+        </Routes>
+      </main>
     </>
   )
 }
