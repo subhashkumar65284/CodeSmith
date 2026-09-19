@@ -13,6 +13,24 @@ authRoute.post("/login",login);
 authRoute.post("/logout",userMiddleware,logout);
 //admin Register
 authRoute.post("/admin/register",adminMiddleware,adminRegister);
+//check Auth
+authRoute.get("/check",userMiddleware,(req,res)=>{
+    try{
+        const response = {
+        firstName:req.user.firstName,
+        lastName:req.user.lastName,
+        email:req.user.email,
+        id:req.user._id
+    }
+    res.status(200).json({
+        user:response,
+        message:"User Authentication Successfull"
+    })
+    }catch(err){
+        res.status(500).send("Error : " + err);
+    }
+    
+})
 
 
 module.exports = authRoute

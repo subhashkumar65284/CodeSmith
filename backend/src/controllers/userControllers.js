@@ -10,7 +10,7 @@ const Submission = require("../models/submissionSchema");
 const register = async (req, res) => {
   try {
     validateReg(req.body);
-    const { firstName, email, password } = req.body;
+    const { firstName, lastName, email, password } = req.body;
     //password hashing (can salt for even more security);
     req.body.password = await bcrypt.hash(password, 10);
 
@@ -23,12 +23,22 @@ const register = async (req, res) => {
       process.env.JWT_KEY,
       { expiresIn: 3600 },
     );
+    const response = {
+      firstName: user.firstName,
+      lastName : user.lastName,
+      id:user._id,
+      email:user.email
+    }
     res.cookie("token", token, { maxAge: 3600 * 1000 });
-    res.status(201).send("User Registered Successfully!");
+    res.status(201).json({
+      user:response,
+      message:"User registered Successfully"
+    })
   } catch (err) {
     res.send("Error : " + err);
   }
 };
+
 const login = async (req, res) => {
   try {
     validateLogin(req.body);
@@ -40,13 +50,23 @@ const login = async (req, res) => {
       process.env.JWT_KEY,
       { expiresIn: 3600 },
     );
+    const response = {
+      firstName: user.firstName,
+      lastName : user.lastName,
+      email:user.email,
+      id:user._id
+    }
     res.cookie("token", token, { maxAge: 3600 * 1000 });
-    res.status(201).send("Logged in Successfully!");
+    res.status(201).json({
+      user:response,
+      message:"Login Successfull"
+    })
   } catch (err) {
     res.send("Error : " + err);
   }
 };
-const logout = async (req, res) => {
+
+const logout = async (req, res) => { 
   try {
     const { token } = req.cookies;
     const payload = jwt.verify(token, process.env.JWT_KEY);

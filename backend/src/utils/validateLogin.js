@@ -1,5 +1,6 @@
 const validator = require('validator');
-const User = require("../models/userSchema");
+
+
 const validateLogin = async (data) => {
     const mandatoryFields = ["email", "password"];
 
