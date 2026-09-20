@@ -8,8 +8,15 @@ import {
   Sparkles,
   TerminalSquare,
 } from "lucide-react";
+import { useDispatch,useSelector } from "react-redux";
+import {useNavigate} from "react-router";
+import { loginUser } from "../slices/authSlice";
+import { useEffect } from "react";
 
 function Login() {
+  const dispatch = useDispatch();
+  const {isAuthenticated} = useSelector((state) => state.auth);
+  const navigate = useNavigate();
   const loginSchema = z.object({    
     email: z.string().email('Invalid email address').toLowerCase().trim(),
     
@@ -22,6 +29,17 @@ function Login() {
     .regex(/[^A-Za-z0-9]/, 'Must contain special character'),
   });
   const { register, handleSubmit,formState:{errors} } = useForm({resolver:zodResolver(loginSchema)});
+
+  useEffect(()=> {
+    if(isAuthenticated){
+      navigate('/');
+    }
+  },[isAuthenticated,navigate])
+
+  const onSubmit = (data) => {
+    dispatch(loginUser(data));
+  }
+  
   return (
     <div className="w-full h-full min-h-[calc(100vh-4rem)] bg-[#030014] text-white flex items-center justify-center p-4 sm:p-6 selection:bg-indigo-500/30 overflow-hidden relative">
       {/* Background Effects */}
@@ -54,7 +72,7 @@ function Login() {
             </div>
             <h2 className="text-5xl font-bold leading-[1.15]">
               Master the art of <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400">
                 software craft.
               </span>
             </h2>
@@ -80,7 +98,7 @@ function Login() {
               <div className="h-2 w-4/5 bg-white/10 rounded-full"></div>
               <div className="h-2 w-full bg-white/10 rounded-full"></div>
             </div>
-            <div className="mt-4 h-10 w-full bg-gradient-to-r from-indigo-500/30 to-purple-500/30 rounded-lg"></div>
+            <div className="mt-4 h-10 w-full bg-linear-to-r from-indigo-500/30 to-purple-500/30 rounded-lg"></div>
           </div>
         </div>
 
@@ -95,7 +113,7 @@ function Login() {
             </div>
 
             <form
-              onSubmit={handleSubmit((data) => console.log(data))}
+              onSubmit={handleSubmit(onSubmit)}
               className="space-y-3.5"
             >
 

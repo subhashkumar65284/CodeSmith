@@ -1,7 +1,10 @@
+import { useSelector } from "react-redux";
+
 function Home() {
+  const {user} = useSelector((state)=>state.auth)
   return (
     <>
-      <h1>Home</h1>
+      <h1>Hello {user.firstName}, Welcome to codeSmith</h1>
     </>
   );
 }

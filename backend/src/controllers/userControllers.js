@@ -35,7 +35,7 @@ const register = async (req, res) => {
       message:"User registered Successfully"
     })
   } catch (err) {
-    res.send("Error : " + err);
+    res.status(500).send("Error : " + err);
   }
 };
 
@@ -62,7 +62,7 @@ const login = async (req, res) => {
       message:"Login Successfull"
     })
   } catch (err) {
-    res.send("Error : " + err);
+    res.status(500).send("Error : " + err);
   }
 };
 

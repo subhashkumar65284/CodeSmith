@@ -9,8 +9,16 @@ import {
   Sparkles,
   TerminalSquare,
 } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
+import { registerUser } from "../slices/authSlice";
 
 function SignUp() {
+  const dispatch = useDispatch();
+  const {isAuthenticated} = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
   const signupSchema = z.object({
     firstName: z.string().min(3, "First name is required").trim(),
     lastName: z.string().trim(),
@@ -29,6 +37,16 @@ function SignUp() {
     formState: { errors },
   } = useForm({ resolver: zodResolver(signupSchema) });
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
+
+  const onSubmit = (data) => {
+    dispatch(registerUser(data));
+  };
+
   return (
     <div className="w-full h-full min-h-[calc(100vh-4rem)] bg-[#030014] text-white flex items-center justify-center p-4 sm:p-6 selection:bg-indigo-500/30 overflow-hidden relative">
       {/* Background Effects */}
@@ -46,9 +64,9 @@ function SignUp() {
           {/* Logo Area */}
           <div className="flex items-center gap-3 relative z-10">
             <div className="w-12 h-12 bg-linear-to-br rounded-xl flex items-center justify-center ">
-              <img src="/favicon.svg" className="h-16 w-16"/>
+              <img src="/favicon.svg" className="h-16 w-16" />
             </div>
-            <h1 className="font-bold text-3xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
+            <h1 className="font-bold text-3xl tracking-tight bg-clip-text text-transparent bg-linear-to-r from-white to-white/70">
               CodeSmith
             </h1>
           </div>
@@ -101,10 +119,7 @@ function SignUp() {
               </p>
             </div>
 
-            <form
-              onSubmit={handleSubmit((data) => console.log(data))}
-              className="space-y-3.5"
-            >
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* First Name */}
                 <div className="space-y-1">
@@ -196,7 +211,7 @@ function SignUp() {
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-medium py-2.5 rounded-xl transition-all shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_25px_rgba(99,102,241,0.5)] flex items-center justify-center gap-2 group mt-3"
+                className="w-full bg-linear-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-medium py-2.5 rounded-xl transition-all shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_25px_rgba(99,102,241,0.5)] flex items-center justify-center gap-2 group mt-3"
               >
                 Create Account
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

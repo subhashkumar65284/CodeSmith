@@ -8,7 +8,7 @@ export const registerUser = createAsyncThunk(
             const response = await axiosClient.post('auth/register',userData);
             return response.data.user;
         }catch(err){
-            return rejectWithValue(err)
+            return rejectWithValue(err.response?.data?.message || err.message)
         }
     }
 )
@@ -20,19 +20,19 @@ export const loginUser = createAsyncThunk(
             const response = await axiosClient.post('auth/login',userData);
             return response.data.user;
         }catch(err){
-            return rejectWithValue(err)
+            return rejectWithValue(err.response?.data?.message || err.message)
         }
     }
 )
 
-export const checkUser = createAsyncThunk(
+export const checkAuth = createAsyncThunk(
     'auth/check',
     async (_, {rejectWithValue}) => {
         try{
             const response = await axiosClient.get('auth/check');
             return response.data.user;
         }catch(err){
-            return rejectWithValue(err)
+            return rejectWithValue(err.response?.data?.message || err.message)
         }
     }
 )
@@ -44,7 +44,7 @@ export const logoutUser = createAsyncThunk(
             await axiosClient.post('auth/logout');
             return null;
         }catch(err){
-            return rejectWithValue(err)
+            return rejectWithValue(err.response?.data?.message || err.message)
         }
     }
 )
@@ -95,16 +95,16 @@ export const authSlice = createSlice({
     })
 
     //check user cases
-    builder.addCase(checkUser.pending, (state) => {
+    builder.addCase(checkAuth.pending, (state) => {
         state.loading = true;
         state.error = null
     })
-    builder.addCase(checkUser.fulfilled, (state, action) => {
+    builder.addCase(checkAuth.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
         state.isAuthenticated = !!action.payload;
     })
-    builder.addCase(checkUser.rejected, (state, action) => {
+    builder.addCase(checkAuth.rejected, (state, action) => {
         state.loading = false;
         state.user = null;
         state.isAuthenticated = false;

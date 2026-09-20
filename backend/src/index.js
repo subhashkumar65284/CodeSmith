@@ -8,6 +8,12 @@ const authRoute = require("./routes/userAuthRoute");
 const problemsRoute = require("./routes/problemsRoute");
 const submissionRoute = require("./routes/submissionRoute");
 const userRoute = require("./routes/userRoute");
+const cors = require('cors')
+
+app.use(cors({
+  origin:'http://localhost:5173', 
+  credentials:true
+}))
 app.use(express.json());
 app.use(cookieParser());
 
