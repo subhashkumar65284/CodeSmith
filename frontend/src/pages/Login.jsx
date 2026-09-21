@@ -15,7 +15,7 @@ import { useEffect } from "react";
 
 function Login() {
   const dispatch = useDispatch();
-  const {isAuthenticated} = useSelector((state) => state.auth);
+  const {isAuthenticated,error} = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const loginSchema = z.object({    
     email: z.string().email('Invalid email address').toLowerCase().trim(),
@@ -39,9 +39,12 @@ function Login() {
   const onSubmit = (data) => {
     dispatch(loginUser(data));
   }
+  const onSignupClick = (data) => {
+    navigate('/signup');
+  }
   
   return (
-    <div className="w-full h-full min-h-[calc(100vh-4rem)] bg-[#030014] text-white flex items-center justify-center p-4 sm:p-6 selection:bg-indigo-500/30 overflow-hidden relative">
+    <div className="w-full h-full bg-[#030014] text-white flex items-center justify-center p-4 sm:p-6 selection:bg-indigo-500/30 overflow-hidden relative">
       {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[20%] left-[10%] w-[70%] h-[70%] rounded-full bg-indigo-600/10 blur-[120px]" />
@@ -133,11 +136,6 @@ function Login() {
                     placeholder="john@example.com"
                   />
                 </div>
-                {errors.email && (
-                  <p className="text-red-400 text-[10px] leading-tight mt-0.5 pl-1">
-                    {errors.email.message}
-                  </p>
-                )}
               </div>
 
               {/* Password */}
@@ -156,9 +154,9 @@ function Login() {
                     placeholder="••••••••"
                   />
                 </div>
-                {errors.password && (
+                {error && (
                   <p className="text-red-400 text-[10px] leading-tight mt-0.5 pl-1">
-                    {errors.password.message}
+                    {error}
                   </p>
                 )}
               </div>
@@ -223,7 +221,7 @@ function Login() {
             <p className="text-center text-sm text-white/50 pt-2">
               Don't have an account?{" "}
               <a
-                href="#"
+                onClick={onSignupClick}
                 className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors cursor-pointer"
               >
                 Register

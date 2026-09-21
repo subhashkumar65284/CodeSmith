@@ -1,38 +1,67 @@
-import { User } from 'lucide-react'
+import { User, Menu } from 'lucide-react'
+import { useSelector, useDispatch } from 'react-redux';
+import { logoutUser } from '../slices/authSlice';
+
 export default function Navbar() {
+  const dispatch = useDispatch();
+
+  const onLogoutClick = () => {
+    dispatch(logoutUser());
+  }
   return (
-    <div className="navbar shadow-sm flex-row justify-between sticky top-0 z-50 bg-linear-to-r from-indigo-700 via-purple-800 to-purple-900">
-      <div className="w-8 shrink-0 flex justify-around">
-        <img
-          alt=""
-          src="favicon.svg"
-        />
-
-      <div className="flex-1 min-w-0">
-        <a className="btn btn-ghost text-xl font-black">CodeSmith</a>
+    <div className="navbar shadow-sm sticky top-0 z-50 bg-linear-to-r from-indigo-700/70 via-purple-800/70 to-purple-900/70 backdrop-blur-lg border-b border-white/10 px-4 md:px-8">
+      {/* Mobile Menu & Logo */}
+      <div className="navbar-start w-full md:w-auto flex-1 md:flex-none">
+        <div className="dropdown md:hidden">
+          <div tabIndex={0} role="button" className="btn btn-ghost btn-circle text-white">
+            <Menu className="w-6 h-6" />
+          </div>
+          <ul
+            tabIndex={0}
+            className="menu menu-sm dropdown-content mt-3 z-1 p-2 shadow bg-base-100 rounded-box w-52"
+          >
+            <li><a className="cursor-pointer">Problems</a></li>
+            <li><a className="cursor-pointer">Resources</a></li>
+            <li><a className="cursor-pointer">About Us</a></li>
+          </ul>
+        </div>
+        
+        <div className="flex items-center gap-3 shrink-0 ml-2 md:ml-0">
+          <img src="favicon.svg" className="w-8 h-8" alt="Logo" />
+          <a className="text-xl md:text-2xl font-black text-white">CodeSmith</a>
+        </div>
       </div>
+
+      {/* Desktop Navigation */}
+      <div className="navbar-center hidden md:flex flex-1 justify-center">
+        <ul className="flex gap-8 text-white/90 font-medium">
+          <li>
+            <a className="cursor-pointer hover:text-white transition-colors">Problems</a>
+          </li>
+          <li>
+            <a className="cursor-pointer hover:text-white transition-colors">Resources</a>
+          </li>
+          <li>
+            <a className="cursor-pointer hover:text-white transition-colors">About Us</a>
+          </li>
+        </ul>
       </div>
 
-      <div className="flex gap-2 shrink-0">
-        <input
-          type="text"
-          placeholder="Search"
-          className="input w-20 md:w-auto focus:outline-none rounded-3xl bg-purple-950"
-        />
-
+      {/* User Profile */}
+      <div className="navbar-end shrink-0 w-auto">
         <div className="dropdown dropdown-end">
           <div
             tabIndex={0}
             role="button"
-            className="btn btn-ghost btn-circle avatar flex justify-center items-center"
+            className="btn btn-ghost btn-circle avatar flex justify-center items-center hover:bg-white/20 transition-colors"
           >
-            <div className="w-10 rounded-full">
-              <User className='w-7 h-7 relative left-1 top-1'/>
+            <div className="w-10 h-10 rounded-full border-2 border-white/30 bg-white/10 flex items-center justify-center">
+              <User className="w-6 h-6 text-white"/>
             </div>
           </div>
 
           <ul
-            tabIndex={-1}
+            tabIndex={0}
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
             <li>
@@ -41,7 +70,7 @@ export default function Navbar() {
             <li>
               <a>Settings</a>
             </li>
-            <li>
+            <li onClick={onLogoutClick}>
               <a>Logout</a>
             </li>
           </ul>

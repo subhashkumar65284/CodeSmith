@@ -27,7 +27,9 @@ const register = async (req, res) => {
       firstName: user.firstName,
       lastName : user.lastName,
       id:user._id,
-      email:user.email
+      email:user.email,
+      role:user.role,
+      problemSolved:problemSolved
     }
     res.cookie("token", token, { maxAge: 3600 * 1000 });
     res.status(201).json({
@@ -42,25 +44,53 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     validateLogin(req.body);
+
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email: email });
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({
+        message: "Invalid email or password"
+      });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        message: "Invalid email or password"
+      });
+    }
+
     const token = jwt.sign(
-      { _id: user._id, email: email, role: user.role },
+      {
+        _id: user._id,
+        email: user.email,
+        role: user.role
+      },
       process.env.JWT_KEY,
-      { expiresIn: 3600 },
+      { expiresIn: 3600 }
     );
+
     const response = {
       firstName: user.firstName,
-      lastName : user.lastName,
-      email:user.email,
-      id:user._id
-    }
-    res.cookie("token", token, { maxAge: 3600 * 1000 });
-    res.status(201).json({
-      user:response,
-      message:"Login Successfull"
-    })
+      lastName: user.lastName,
+      email: user.email,
+      id: user._id,
+      role:user.role,
+      problemSolved:user.problemSolved
+    };
+
+    res.cookie("token", token, {
+      maxAge: 3600 * 1000
+    });
+
+    res.status(200).json({
+      user: response,
+      message: "Login Successful"
+    });
+
   } catch (err) {
     res.status(500).send("Error : " + err);
   }
@@ -75,7 +105,9 @@ const logout = async (req, res) => {
     await redisClient.expireAt(`token:${token}`, payload.exp);
 
     res.clearCookie("token");
-    res.status(200).send("Logout successful!");
+    res.status(200).json({
+      message:"Logout successfull"
+    });
   } catch (err) {
     res.send("Error : " + err);
   }
@@ -99,18 +131,15 @@ const adminRegister = async (req, res) => {
     res.send("Error : " + err);
   }
 };
-const userProfile = async (req, res) => {
+const problemSolvedByUser = async (req, res) => {
   try {
     const user = await req.user.populate({
       path: "problemSolved",
-      select: "-_id title difficulty topics",
+      select: "_id title difficulty topics",
     });
 
     res.status(200).json({
-      name: `${req.user.firstName} ${req.user.lastName}`,
-      email: user.email,
       problemsSolved: user.problemSolved,
-      role: user.role,
     });
   } catch (err) {
     res.status(500).send("Internal Server Error : " + err);
@@ -140,6 +169,6 @@ module.exports = {
   login,
   logout,
   adminRegister,
-  userProfile,
+  problemSolvedByUser,
   problemSubmissions,
 };

@@ -15,11 +15,12 @@ const problemSchema = new Schema(
     },
     difficulty: {
       type: String,
-      enum: ["basic", "easy", "medium", "hard"],
+      enum: ["easy", "medium", "hard"],
       required: true,
     },
     topics: {
-      type: [String],
+      type: ["String"],
+      enum:["math","arrays","hash table","stack","queue","two pointers","prefix sum","trees","dynamic programming","tries","segment trees"],
       required: true,
     },
     visibleTestCases: [

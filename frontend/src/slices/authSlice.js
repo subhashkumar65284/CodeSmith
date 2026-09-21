@@ -20,6 +20,7 @@ export const loginUser = createAsyncThunk(
             const response = await axiosClient.post('auth/login',userData);
             return response.data.user;
         }catch(err){
+            console.log(err)
             return rejectWithValue(err.response?.data?.message || err.message)
         }
     }
@@ -44,7 +45,7 @@ export const logoutUser = createAsyncThunk(
             await axiosClient.post('auth/logout');
             return null;
         }catch(err){
-            return rejectWithValue(err.response?.data?.message || err.message)
+            return rejectWithValue(err.response?.data?.message || err.message);
         }
     }
 )
@@ -54,7 +55,7 @@ export const authSlice = createSlice({
   initialState: {
       user:null,
       isAuthenticated:false,
-      loading:false,
+      loading:true,
       error:null,
   },
   reducers: {

@@ -7,12 +7,16 @@ const authRoute = express.Router();
 
 //Register
 authRoute.post("/register",register);
+
 // //Login
 authRoute.post("/login",login);
+
 // //Logout
 authRoute.post("/logout",userMiddleware,logout);
+
 //admin Register
 authRoute.post("/admin/register",adminMiddleware,adminRegister);
+
 //check Auth
 authRoute.get("/check",userMiddleware,(req,res)=>{
     try{
@@ -20,7 +24,9 @@ authRoute.get("/check",userMiddleware,(req,res)=>{
         firstName:req.user.firstName,
         lastName:req.user.lastName,
         email:req.user.email,
-        id:req.user._id
+        id:req.user._id,
+        role:req.user.role,
+        problemSolved:req.user.problemSolved
     }
     res.status(200).json({
         user:response,

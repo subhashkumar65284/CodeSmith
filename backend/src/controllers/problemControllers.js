@@ -1,10 +1,5 @@
 // const axios = require("axios");
-const {
-  getFileNameByLanguage,
-  submitBatch,
-  validateTestCases,
-  getSubmissions
-} = require("../utils/problemUtility");
+const {submitBatch,validateTestCases,getSubmissions} = require("../utils/problemUtility");
 const Problem = require("../models/problemSchema");
 
 const createProblem = async (req, res) => {
@@ -217,17 +212,43 @@ const getProblemById = async (req, res) => {
 };
 
 const getAllProblems = async (req, res) => {
-  try {
-    const Problems = await Problem.find({}).select('_id title difficulty');
+    try {
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
 
-    if (Problems.length === 0) {
-      res.status(404).send("Problems not found");
+        const skip = (page - 1) * limit;
+
+        const query = {};
+        if (req.query.difficulty) {
+            query.difficulty = req.query.difficulty.toLowerCase();
+        }
+        if (req.query.topic) {
+            query.topics = req.query.topic.toLowerCase();
+        }
+
+        const [problems, totalProblems] = await Promise.all([
+            Problem.find(query)
+                .skip(skip)
+                .limit(limit),
+
+            Problem.countDocuments(query)
+        ]);
+
+        const totalPages = Math.ceil(totalProblems / limit);
+
+        res.status(200).json({
+            problems,
+            currentPage: page,
+            totalPages,
+            totalProblems,
+            limit
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            message: "Failed to fetch problems"
+        });
     }
-
-    res.status(200).send(Problems);
-  } catch (err) {
-    res.status(500).send(err);
-  }
 };
 
 module.exports = {

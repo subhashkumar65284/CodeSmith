@@ -8,17 +8,28 @@ import { useEffect } from 'react';
 import { checkAuth } from "./slices/authSlice"
 
 function App() {
-  const {isAuthenticated} = useSelector(state => state.auth);
+  const {isAuthenticated,loading} = useSelector(state => state.auth);
   const dispatch = useDispatch();
+  let mainStyle = `${isAuthenticated?"min-h-[calc(100vh-4rem)]":"w-screen h-screen"} flex flex-col justify-center items-center`
 
   useEffect(()=>{
-    dispatch(checkAuth())
+    dispatch(checkAuth());
   },[dispatch])
+
+  if(loading){
+    return(
+      <>
+      <div className="w-screen h-screen bg-[#030014] flex justify-center items-center">
+          <span className="loading loading-bars loading-xl"></span>
+      </div>
+      </>
+    )
+  }
 
   return (
     <>
-      <Navbar />
-      <main className="min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center"> 
+      {isAuthenticated && <Navbar />}
+      <main className={mainStyle}> 
   <Routes>
     <Route
       path="/"

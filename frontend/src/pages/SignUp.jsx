@@ -46,9 +46,12 @@ function SignUp() {
   const onSubmit = (data) => {
     dispatch(registerUser(data));
   };
+  const onLoginClick = () => {
+    navigate("/login");
+  };
 
   return (
-    <div className="w-full h-full min-h-[calc(100vh-4rem)] bg-[#030014] text-white flex items-center justify-center p-4 sm:p-6 selection:bg-indigo-500/30 overflow-hidden relative">
+    <div className="w-full h-full bg-[#030014] text-white flex items-center justify-center p-4 sm:p-6 selection:bg-indigo-500/30 overflow-hidden relative">
       {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[20%] left-[10%] w-[70%] h-[70%] rounded-full bg-indigo-600/10 blur-[120px]" />
@@ -269,7 +272,7 @@ function SignUp() {
             <p className="text-center text-sm text-white/50 pt-2">
               Already have an account?{" "}
               <a
-                href="#"
+                onClick={onLoginClick}
                 className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors cursor-pointer"
               >
                 Sign in
