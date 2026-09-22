@@ -20,7 +20,7 @@ const problemSchema = new Schema(
     },
     topics: {
       type: ["String"],
-      enum:["math","arrays","hash table","stack","queue","two pointers","prefix sum","trees","dynamic programming","tries","segment trees"],
+      enum:["math","arrays","hash table","linked list","stack","queue","two pointers","prefix sum","trees","dynamic programming","tries","segment trees"],
       required: true,
     },
     visibleTestCases: [

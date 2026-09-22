@@ -6,6 +6,10 @@ import Navbar from './components/Navbar';
 import { useSelector,useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { checkAuth } from "./slices/authSlice"
+import AdminDashboard from './pages/AdminDashboard';
+import AdminCreateProblem from './pages/AdminCreateProblem';
+import AdminUpdateProblem from './pages/AdminUpdateProblem';
+import AdminDeleteProblem from './pages/AdminDeleteProblem';
 
 function App() {
   const {isAuthenticated,loading} = useSelector(state => state.auth);
@@ -44,6 +48,24 @@ function App() {
     <Route
       path="/login"
       element={isAuthenticated ? <Navigate to="/" /> : <Login />}
+    />
+
+    {/* Admin Routes */}
+    <Route
+      path="/admin"
+      element={isAuthenticated ? <AdminDashboard /> : <Navigate to="/login" />}
+    />
+    <Route
+      path="/admin/create"
+      element={isAuthenticated ? <AdminCreateProblem /> : <Navigate to="/login" />}
+    />
+    <Route
+      path="/admin/update"
+      element={isAuthenticated ? <AdminUpdateProblem /> : <Navigate to="/login" />}
+    />
+    <Route
+      path="/admin/delete"
+      element={isAuthenticated ? <AdminDeleteProblem /> : <Navigate to="/login" />}
     />
   </Routes>
 </main>

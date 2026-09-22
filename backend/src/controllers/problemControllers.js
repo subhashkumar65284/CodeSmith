@@ -225,6 +225,9 @@ const getAllProblems = async (req, res) => {
         if (req.query.topic) {
             query.topics = req.query.topic.toLowerCase();
         }
+        if (req.query.search) {
+            query.title = { $regex: req.query.search, $options: "i" };
+        }
 
         const [problems, totalProblems] = await Promise.all([
             Problem.find(query)
@@ -251,10 +254,63 @@ const getAllProblems = async (req, res) => {
     }
 };
 
+const problemSolvedByUser = async (req, res) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+
+    const { difficulty, topic } = req.query;
+
+    const skip = (page - 1) * limit;
+
+    const match = {};
+
+    if (difficulty && difficulty !== "All") {
+      match.difficulty = difficulty;
+    }
+
+    if (topic && topic !== "All") {
+      match.topics = topic;
+    }
+
+    if (req.query.search) {
+      match.title = { $regex: req.query.search, $options: "i" };
+    }
+
+    const totalProblems = await Problem.countDocuments({
+      _id: { $in: req.user.problemSolved },
+      ...match,
+    });
+
+    const problems = await Problem.find({
+      _id: { $in: req.user.problemSolved },
+      ...match,
+    })
+      .skip(skip)
+      .limit(limit);
+
+    const totalPages = Math.ceil(totalProblems / limit);
+
+    res.status(200).json({
+      problems,
+      currentPage: page,
+      totalPages,
+      totalProblems,
+      limit,
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      message: "Failed to fetch problems",
+    });
+  }
+};
+
 module.exports = {
   createProblem,
   updateProblem,
   deleteProblem,
   getProblemById,
   getAllProblems,
+  problemSolvedByUser
 };

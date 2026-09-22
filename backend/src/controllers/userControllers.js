@@ -10,34 +10,38 @@ const Submission = require("../models/submissionSchema");
 const register = async (req, res) => {
   try {
     validateReg(req.body);
-    const { firstName, lastName, email, password } = req.body;
-    //password hashing (can salt for even more security);
+
+    const { password } = req.body;
+
     req.body.password = await bcrypt.hash(password, 10);
 
-    //Very Important to prevent user register themselves as admin
     req.body.role = "user";
 
     const user = await User.create(req.body);
+
     const token = jwt.sign(
-      { _id: user._id, email: email, role: user.role },
+      { _id: user._id, email: user.email, role: user.role },
       process.env.JWT_KEY,
       { expiresIn: 3600 },
     );
+
     const response = {
       firstName: user.firstName,
-      lastName : user.lastName,
-      id:user._id,
-      email:user.email,
-      role:user.role,
-      problemSolved:problemSolved
-    }
+      lastName: user.lastName,
+      id: user._id,
+      email: user.email,
+      role: user.role,
+      problemSolved: user.problemSolved,
+    };
+
     res.cookie("token", token, { maxAge: 3600 * 1000 });
+
     res.status(201).json({
-      user:response,
-      message:"User registered Successfully"
-    })
+      user: response,
+      message: "User registered Successfully",
+    });
   } catch (err) {
-    res.status(500).send("Error : " + err);
+    res.status(500).send("Error : " + err.message);
   }
 };
 
@@ -51,7 +55,7 @@ const login = async (req, res) => {
 
     if (!user) {
       return res.status(401).json({
-        message: "Invalid email or password"
+        message: "Invalid email or password",
       });
     }
 
@@ -59,7 +63,7 @@ const login = async (req, res) => {
 
     if (!isPasswordValid) {
       return res.status(401).json({
-        message: "Invalid email or password"
+        message: "Invalid email or password",
       });
     }
 
@@ -67,10 +71,10 @@ const login = async (req, res) => {
       {
         _id: user._id,
         email: user.email,
-        role: user.role
+        role: user.role,
       },
       process.env.JWT_KEY,
-      { expiresIn: 3600 }
+      { expiresIn: 3600 },
     );
 
     const response = {
@@ -78,25 +82,24 @@ const login = async (req, res) => {
       lastName: user.lastName,
       email: user.email,
       id: user._id,
-      role:user.role,
-      problemSolved:user.problemSolved
+      role: user.role,
+      problemSolved: user.problemSolved,
     };
 
     res.cookie("token", token, {
-      maxAge: 3600 * 1000
+      maxAge: 3600 * 1000,
     });
 
     res.status(200).json({
       user: response,
-      message: "Login Successful"
+      message: "Login Successful",
     });
-
   } catch (err) {
     res.status(500).send("Error : " + err);
   }
 };
 
-const logout = async (req, res) => { 
+const logout = async (req, res) => {
   try {
     const { token } = req.cookies;
     const payload = jwt.verify(token, process.env.JWT_KEY);
@@ -106,7 +109,7 @@ const logout = async (req, res) => {
 
     res.clearCookie("token");
     res.status(200).json({
-      message:"Logout successfull"
+      message: "Logout successfull",
     });
   } catch (err) {
     res.send("Error : " + err);
@@ -131,7 +134,8 @@ const adminRegister = async (req, res) => {
     res.send("Error : " + err);
   }
 };
-const problemSolvedByUser = async (req, res) => {
+
+const userProfile = async (req, res) => {
   try {
     const user = await req.user.populate({
       path: "problemSolved",
@@ -145,6 +149,7 @@ const problemSolvedByUser = async (req, res) => {
     res.status(500).send("Internal Server Error : " + err);
   }
 };
+
 const problemSubmissions = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -169,6 +174,6 @@ module.exports = {
   login,
   logout,
   adminRegister,
-  problemSolvedByUser,
   problemSubmissions,
+  userProfile
 };

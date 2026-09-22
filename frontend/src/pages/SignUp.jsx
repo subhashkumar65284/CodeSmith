@@ -8,13 +8,16 @@ import {
   ArrowRight,
   Sparkles,
   TerminalSquare,
+  Eye,
+  EyeOff
 } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { registerUser } from "../slices/authSlice";
 
 function SignUp() {
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const {isAuthenticated} = useSelector((state) => state.auth);
   const navigate = useNavigate();
@@ -199,11 +202,22 @@ function SignUp() {
                     <Lock className="w-4.5 h-4.5" />
                   </div>
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     {...register("password")}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all placeholder:text-white/20"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-10 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all placeholder:text-white/20"
                     placeholder="••••••••"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-white/40 hover:text-white/80 transition-colors"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4.5 h-4.5" />
+                    ) : (
+                      <Eye className="w-4.5 h-4.5" />
+                    )}
+                  </button>
                 </div>
                 {errors.password && (
                   <p className="text-red-400 text-[10px] leading-tight mt-0.5 pl-1">

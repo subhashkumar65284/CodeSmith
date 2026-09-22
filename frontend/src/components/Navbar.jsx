@@ -1,12 +1,21 @@
 import { User, Menu } from 'lucide-react'
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutUser } from '../slices/authSlice';
+import {useNavigate} from 'react-router';
 
 export default function Navbar() {
+  const {user,isAuthenticated,loading,error} = useSelector((state)=> state.auth);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const onLogoutClick = () => {
     dispatch(logoutUser());
+  }
+  const onAdminDashboardClick = () => {
+    navigate("/admin");
+  }
+  const onProblemsClick = () => {
+    navigate("/");
   }
   return (
     <div className="navbar shadow-sm sticky top-0 z-50 bg-linear-to-r from-indigo-700/70 via-purple-800/70 to-purple-900/70 backdrop-blur-lg border-b border-white/10 px-4 md:px-8">
@@ -36,7 +45,7 @@ export default function Navbar() {
       <div className="navbar-center hidden md:flex flex-1 justify-center">
         <ul className="flex gap-8 text-white/90 font-medium">
           <li>
-            <a className="cursor-pointer hover:text-white transition-colors">Problems</a>
+            <a onClick={onProblemsClick} className="cursor-pointer hover:text-white transition-colors">Problems</a>
           </li>
           <li>
             <a className="cursor-pointer hover:text-white transition-colors">Resources</a>
@@ -73,6 +82,9 @@ export default function Navbar() {
             <li onClick={onLogoutClick}>
               <a>Logout</a>
             </li>
+            {user?.role==="admin"?(<li onClick={onAdminDashboardClick}>
+              <a>Admin Dashboard</a>
+            </li>):null}
           </ul>
         </div>
       </div>

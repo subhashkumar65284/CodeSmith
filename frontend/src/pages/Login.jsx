@@ -7,13 +7,16 @@ import {
   ArrowRight,
   Sparkles,
   TerminalSquare,
+  Eye,
+  EyeOff
 } from "lucide-react";
 import { useDispatch,useSelector } from "react-redux";
 import {useNavigate} from "react-router";
 import { loginUser } from "../slices/authSlice";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 
 function Login() {
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const {isAuthenticated,error} = useSelector((state) => state.auth);
   const navigate = useNavigate();
@@ -62,7 +65,7 @@ function Login() {
             <div className="w-12 h-12 bg-linear-to-br rounded-xl flex items-center justify-center ">
               <img src="/favicon.svg" className="h-16 w-16"/>
             </div>
-            <h1 className="font-bold text-3xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
+            <h1 className="font-bold text-3xl tracking-tight bg-clip-text text-transparent bg-linear-to-r from-white to-white/70">
               CodeSmith
             </h1>
           </div>
@@ -148,15 +151,26 @@ function Login() {
                     <Lock className="w-4.5 h-4.5" />
                   </div>
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     {...register("password")}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all placeholder:text-white/20"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-10 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all placeholder:text-white/20"
                     placeholder="••••••••"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-white/40 hover:text-white/80 transition-colors"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4.5 h-4.5" />
+                    ) : (
+                      <Eye className="w-4.5 h-4.5" />
+                    )}
+                  </button>
                 </div>
-                {error && (
+                {errors && (
                   <p className="text-red-400 text-[10px] leading-tight mt-0.5 pl-1">
-                    {error}
+                    {errors.firstName}
                   </p>
                 )}
               </div>

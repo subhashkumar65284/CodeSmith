@@ -10,6 +10,7 @@ const TOPICS = [
   "All",
   "math",
   "arrays",
+  "linked list",
   "hash table",
   "stack",
   "queue",
@@ -27,7 +28,7 @@ function Home() {
     (state) => state.auth,
   );
   const [searchTerm, setSearchTerm] = useState("");
-  const [totalPages,setTotalPages] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [problems, setProblems] = useState([]);
   const [loadingProblems, setLoadingProblems] = useState(true);
 
@@ -35,22 +36,49 @@ function Home() {
     difficulty: "All",
     topic: "All",
     page: 1,
+    status: "All",
+    search: "",
   });
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setFilters((prev) => {
+        if (prev.search === searchTerm) return prev;
+        return { ...prev, search: searchTerm, page: 1 };
+      });
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   useEffect(() => {
     const fetchProblems = async () => {
       setLoadingProblems(true);
       try {
-        const response = await axiosClient.get("problem/", {
-          params: {
-            difficulty: filters.difficulty === "All" ? undefined : filters.difficulty,
-            topic: filters.topic === "All" ? undefined : filters.topic,
-            page: filters.page,
-          },
-        });
-        setProblems(response.data.problems);
-        setTotalPages(response.data.totalPages);
+        if (filters.status === "All") {
+          const response = await axiosClient.get("problem/", {
+            params: {
+              difficulty:
+                filters.difficulty === "All" ? undefined : filters.difficulty,
+              topic: filters.topic === "All" ? undefined : filters.topic,
+              page: filters.page,
+              search: filters.search || undefined,
+            },
+          });
+          setProblems(response.data.problems);
+          setTotalPages(response.data.totalPages);
+        } else {
+          const response = await axiosClient.get("problem/solvedByUser", {
+            params: {
+              difficulty:filters.difficulty === "All" ? undefined : filters.difficulty,
+              topic: filters.topic === "All" ? undefined : filters.topic,
+              page: filters.page,
+              status:filters.status,
+              search: filters.search || undefined,
+            },
+          });
+          setProblems(response.data.problems);
+          setTotalPages(response.data.totalPages);
+        }
       } finally {
         setLoadingProblems(false);
       }
@@ -135,12 +163,12 @@ function Home() {
               <select
                 className="appearance-none bg-white/5 border border-white/10 rounded-xl pl-4 pr-10 py-2.5 text-sm text-white/80 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer w-full sm:w-auto"
                 value={filters.status}
-                // onChange={(e) => {
-                //   setFilters((prev) => ({
-                //     ...prev,
-                //     status: e.target.value,
-                //   }));
-                // }}
+                onChange={(e) => {
+                  setFilters((prev) => ({
+                    ...prev,
+                    status: e.target.value,
+                  }));
+                }}
               >
                 <option value="All" className="bg-[#0f172a]">
                   Status
