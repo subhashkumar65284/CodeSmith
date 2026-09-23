@@ -5,6 +5,7 @@ import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import { useState } from "react";
+import axiosClient from "../utils/axiosClient";
 
 const problemSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -92,10 +93,10 @@ export default function AdminCreateProblem() {
     setSubmitError("");
     setSuccess(false);
     try {
-      // Assuming API expects auth token which should be handled by axios interceptors or withCredentials
-      const response = await axios.post("http://localhost:3000/api/v1/problems", data, {
+      const response = await axiosClient.post("problem/admin", data, {
         withCredentials: true
       });
+
       if (response.data.success) {
         setSuccess(true);
         setTimeout(() => navigate("/admin"), 2000);

@@ -17,7 +17,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Create Card */}
           <div
-            onClick={() => navigate("/admin/create")}
+            onClick={() => navigate("/admin/createProblem")}
             className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 cursor-pointer hover:bg-white/10 hover:border-indigo-500/50 transition-all group"
           >
             <div className="w-16 h-16 rounded-full bg-indigo-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -31,7 +31,7 @@ export default function AdminDashboard() {
 
           {/* Update Card */}
           <div
-            onClick={() => navigate("/admin/update")}
+            onClick={() => navigate("/admin/updateProblem")}
             className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 cursor-pointer hover:bg-white/10 hover:border-purple-500/50 transition-all group"
           >
             <div className="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -45,7 +45,7 @@ export default function AdminDashboard() {
 
           {/* Delete Card */}
           <div
-            onClick={() => navigate("/admin/delete")}
+            onClick={() => navigate("/admin/deleteProblem")}
             className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 cursor-pointer hover:bg-white/10 hover:border-pink-500/50 transition-all group"
           >
             <div className="w-16 h-16 rounded-full bg-pink-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">

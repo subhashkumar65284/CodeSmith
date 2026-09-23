@@ -20,22 +20,21 @@ const problemSchema = new Schema(
     },
     topics: {
       type: ["String"],
-      enum:["math","arrays","hash table","linked list","stack","queue","two pointers","prefix sum","trees","dynamic programming","tries","segment trees"],
       required: true,
     },
     visibleTestCases: [
       {
         input: {
           type: String,
-          required: true,
+          default: "",
         },
         output: {
           type: String,
-          required: true,
+          default: "",
         },
         explanation: {
           type: String,
-          required: true,
+          default: "",
         },
       },
     ],
@@ -43,11 +42,11 @@ const problemSchema = new Schema(
       {
         input: {
           type: String,
-          required: true,
+          default: "",
         },
         output: {
           type: String,
-          required: true,
+          default: "",
         },
       },
     ],

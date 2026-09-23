@@ -22,7 +22,7 @@ const register = async (req, res) => {
     const token = jwt.sign(
       { _id: user._id, email: user.email, role: user.role },
       process.env.JWT_KEY,
-      { expiresIn: 3600 },
+      { expiresIn: "7d" },
     );
 
     const response = {
@@ -34,7 +34,7 @@ const register = async (req, res) => {
       problemSolved: user.problemSolved,
     };
 
-    res.cookie("token", token, { maxAge: 3600 * 1000 });
+    res.cookie("token", token, { maxAge: 7 * 24 * 3600 * 1000 });
 
     res.status(201).json({
       user: response,
@@ -74,7 +74,7 @@ const login = async (req, res) => {
         role: user.role,
       },
       process.env.JWT_KEY,
-      { expiresIn: 3600 },
+      { expiresIn: "7d" },
     );
 
     const response = {
@@ -87,7 +87,7 @@ const login = async (req, res) => {
     };
 
     res.cookie("token", token, {
-      maxAge: 3600 * 1000,
+      maxAge: 7 * 24 * 3600 * 1000,
     });
 
     res.status(200).json({
@@ -126,9 +126,9 @@ const adminRegister = async (req, res) => {
     const token = jwt.sign(
       { _id: user._id, email: email, role: user.role },
       process.env.JWT_KEY,
-      { expiresIn: 3600 },
+      { expiresIn: "7d" },
     );
-    res.cookie("token", token, { maxAge: 3600 * 1000 });
+    res.cookie("token", token, { maxAge: 7 * 24 * 3600 * 1000 });
     res.status(201).send("User Registered Successfully!");
   } catch (err) {
     res.send("Error : " + err);

@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import { useSelector } from "react-redux";
 import axiosClient from "../utils/axiosClient";
 import { Search, Code2, ChevronDown, ListFilter } from "lucide-react";
 import Problems from "../components/Problems";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
+gsap.registerPlugin(useGSAP);
 
 const TOPICS = [
   "All",
@@ -39,6 +42,27 @@ function Home() {
     status: "All",
     search: "",
   });
+  const tl = useRef();
+  const textRef = useRef();
+  
+  useGSAP(() => {
+      tl.current = gsap.timeline({ paused: true });
+
+      tl.current.from(".animateText", {
+        y: 15,
+        opacity: 0,
+        stagger: 0.2,
+        duration: 1,
+      });
+    },
+    { scope: textRef },
+  );
+
+  useEffect(() => {
+    if (!loading && tl.current) {
+      tl.current.play();
+    }
+  }, [loading]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -97,18 +121,18 @@ function Home() {
       <div className="max-w-6xl mx-auto relative z-10 space-y-8">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-indigo-300 font-medium shadow-sm backdrop-blur-md mb-4">
+          <div ref={textRef}>
+            <div className="animateText inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-indigo-300 font-medium shadow-sm backdrop-blur-md mb-4">
               <Code2 className="w-3.5 h-3.5" />
               <span>Problem Set</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-              Hey There,{" "}
+            <h1 className="animateText text-3xl md:text-4xl font-bold tracking-tight">
+              Hey,{" "}
               <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-purple-400">
                 {user?.firstName + " " + user?.lastName || "Developer"}
               </span>
             </h1>
-            <p className="text-white/50 mt-2">
+            <p className="animateText text-white/50 mt-2">
               Continue your journey to master software craftsmanship.
             </p>
           </div>

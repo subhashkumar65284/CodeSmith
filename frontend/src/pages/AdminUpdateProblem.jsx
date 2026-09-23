@@ -14,15 +14,15 @@ const problemSchema = z.object({
   topics: z.array(z.string()).min(1, "At least one topic is required"),
   visibleTestCases: z.array(
     z.object({
-      input: z.string().min(1, "Input is required"),
-      output: z.string().min(1, "Output is required"),
-      explanation: z.string().min(1, "Explanation is required"),
+      input: z.string(),
+      output: z.string(),
+      explanation: z.string(),
     })
   ).min(1, "At least one visible test case is required"),
   hiddenTestCases: z.array(
     z.object({
-      input: z.string().min(1, "Input is required"),
-      output: z.string().min(1, "Output is required"),
+      input: z.string(),
+      output: z.string(),
     })
   ).min(1, "At least one hidden test case is required"),
   boilerPlateCode: z.array(
@@ -131,7 +131,7 @@ export default function AdminUpdateProblem() {
     setSuccess(false);
     
     try {
-      const response = await axios.get(`http://localhost:3000/api/v1/problems/${id}`);
+      const response = await axiosClient.get(`problem/admin/${id}`);
       if (response.data) {
         const p = response.data;
         
@@ -170,9 +170,7 @@ export default function AdminUpdateProblem() {
     setSubmitError("");
     setSuccess(false);
     try {
-      const response = await axios.put(`http://localhost:3000/api/v1/problems/${problemId}`, data, {
-        withCredentials: true
-      });
+      const response = await axiosClient.put(`problem/admin/${problemId}`, data);
       if (response.data.success) {
         setSuccess(true);
         setTimeout(() => navigate("/admin"), 2000);

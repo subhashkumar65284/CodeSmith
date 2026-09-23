@@ -211,6 +211,26 @@ const getProblemById = async (req, res) => {
   }
 };
 
+const getAdminProblemById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).send("Problem id is Required");
+    }
+
+    const foundProblem = await Problem.findById(id);
+
+    if (!foundProblem) {
+      return res.status(404).send("No Such Problem found!");
+    }
+
+    res.status(200).send(foundProblem);
+  } catch (err) {
+    res.status(500).send("Error: " + err);
+  }
+};
+
 const getAllProblems = async (req, res) => {
     try {
         const page = Number(req.query.page) || 1;
@@ -311,6 +331,7 @@ module.exports = {
   updateProblem,
   deleteProblem,
   getProblemById,
+  getAdminProblemById,
   getAllProblems,
   problemSolvedByUser
 };

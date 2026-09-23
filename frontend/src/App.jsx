@@ -12,7 +12,7 @@ import AdminUpdateProblem from './pages/AdminUpdateProblem';
 import AdminDeleteProblem from './pages/AdminDeleteProblem';
 
 function App() {
-  const {isAuthenticated,loading} = useSelector(state => state.auth);
+  const {user,isAuthenticated,loading} = useSelector(state => state.auth);
   const dispatch = useDispatch();
   let mainStyle = `${isAuthenticated?"min-h-[calc(100vh-4rem)]":"w-screen h-screen"} flex flex-col justify-center items-center`
 
@@ -53,19 +53,19 @@ function App() {
     {/* Admin Routes */}
     <Route
       path="/admin"
-      element={isAuthenticated ? <AdminDashboard /> : <Navigate to="/login" />}
+      element={(isAuthenticated && user?.role ==='admin') ? <AdminDashboard /> : <Navigate to="/login" />}
     />
     <Route
-      path="/admin/create"
-      element={isAuthenticated ? <AdminCreateProblem /> : <Navigate to="/login" />}
+      path="/admin/createProblem"
+      element={(isAuthenticated && user?.role ==='admin') ? <AdminCreateProblem /> : <Navigate to="/login" />}
     />
     <Route
-      path="/admin/update"
-      element={isAuthenticated ? <AdminUpdateProblem /> : <Navigate to="/login" />}
+      path="/admin/updateProblem"
+      element={(isAuthenticated && user?.role ==='admin') ? <AdminUpdateProblem /> : <Navigate to="/login" />}
     />
     <Route
-      path="/admin/delete"
-      element={isAuthenticated ? <AdminDeleteProblem /> : <Navigate to="/login" />}
+      path="/admin/deleteProblem"
+      element={(isAuthenticated && user?.role ==='admin') ? <AdminDeleteProblem /> : <Navigate to="/login" />}
     />
   </Routes>
 </main>

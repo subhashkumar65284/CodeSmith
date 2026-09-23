@@ -64,9 +64,7 @@ export default function AdminDeleteProblem() {
     setSuccess(false);
 
     try {
-      const response = await axios.delete(`http://localhost:3000/api/v1/problems/${problemId}`, {
-        withCredentials: true
-      });
+      const response = await axiosClient.delete(`problem/admin/${problemId}`);
       
       if (response.status === 200) {
         setSuccess(true);
