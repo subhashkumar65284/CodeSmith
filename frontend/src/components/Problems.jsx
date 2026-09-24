@@ -1,9 +1,10 @@
-
+import { useNavigate } from "react-router";
 import { CheckCircle2, Circle } from "lucide-react";
 import { useSelector } from "react-redux";
 
 function Problems({ problems, loadingProblems }) {
   const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
@@ -48,6 +49,9 @@ function Problems({ problems, loadingProblems }) {
                   <tr
                     key={problem._id}
                     className="group hover:bg-white/3 transition-colors cursor-pointer"
+                    onClick={()=>{
+                      navigate(`/problem/${problem._id}`)
+                    }}
                   >
                     <td className="py-4 pl-6 pr-4">
                       <div className="flex items-center justify-center w-6">

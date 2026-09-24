@@ -10,6 +10,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminCreateProblem from './pages/AdminCreateProblem';
 import AdminUpdateProblem from './pages/AdminUpdateProblem';
 import AdminDeleteProblem from './pages/AdminDeleteProblem';
+import ProblemPage from './pages/ProblemPage'
 
 function App() {
   const {user,isAuthenticated,loading} = useSelector(state => state.auth);
@@ -67,6 +68,9 @@ function App() {
       path="/admin/deleteProblem"
       element={(isAuthenticated && user?.role ==='admin') ? <AdminDeleteProblem /> : <Navigate to="/login" />}
     />
+
+    {/*Problem Routes*/}
+    <Route path='/problem/:Pid' element={isAuthenticated ? <ProblemPage/>:<Navigate to="/signup" />}/>
   </Routes>
 </main>
     </>

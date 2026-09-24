@@ -76,7 +76,6 @@ function Home() {
 
   useEffect(() => {
     const fetchProblems = async () => {
-      setLoadingProblems(true);
       try {
         if (filters.status === "All") {
           const response = await axiosClient.get("problem/", {

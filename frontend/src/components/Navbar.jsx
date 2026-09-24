@@ -1,7 +1,7 @@
 import { Menu } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../slices/authSlice";
-import { useNavigate } from "react-router";
+import { useNavigate, NavLink } from "react-router";
 import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -16,7 +16,8 @@ export default function Navbar() {
   const navRef = useRef();
   const tl = useRef();
 
-  useGSAP(() => {
+  useGSAP(
+    () => {
       tl.current = gsap.timeline({ paused: true });
 
       tl.current.from(".navTo", {
@@ -45,7 +46,10 @@ export default function Navbar() {
     navigate("/");
   };
   return (
-    <div ref={navRef} className="navbar shadow-sm sticky top-0 z-50 bg-linear-to-r from-indigo-700/70 via-purple-800/70 to-purple-900/70 backdrop-blur-lg border-b border-white/10 px-4 md:px-8">
+    <div
+      ref={navRef}
+      className="navbar shadow-sm sticky top-0 z-50 bg-linear-to-r from-indigo-700/70 via-purple-800/70 to-purple-900/70 backdrop-blur-lg border-b border-white/10 px-4 md:px-8"
+    >
       {/* Mobile Menu & Logo */}
       <div className="navbar-start w-full md:w-auto flex-1 md:flex-none">
         <div className="dropdown md:hidden">
@@ -82,22 +86,40 @@ export default function Navbar() {
       <div className="navbar-center hidden md:flex flex-1 justify-center">
         <ul className="flex gap-8 text-white/90 font-medium">
           <li>
-            <a
+            <NavLink
+              to="/"
               onClick={onProblemsClick}
-              className="navTo inline-block cursor-pointer hover:text-white transition-colors"
+              className={({ isActive }) =>
+                `navTo inline-block cursor-pointer transition-colors relative
+      ${isActive ? "text-white after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-white" : "hover:text-white"}`
+              }
             >
               Problems
-            </a>
+            </NavLink>
           </li>
           <li>
-            <a className="navTo inline-block cursor-pointer hover:text-white transition-colors">
+            <NavLink
+              to="/resources"
+              onClick={onProblemsClick}
+              className={({ isActive }) =>
+                `navTo inline-block cursor-pointer transition-colors relative
+      ${isActive ? "text-white after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-white" : "hover:text-white"}`
+              }
+            >
               Resources
-            </a>
+            </NavLink>
           </li>
           <li>
-            <a className="navTo inline-block cursor-pointer hover:text-white transition-colors">
+            <NavLink
+              to="/aboutUs"
+              onClick={onProblemsClick}
+              className={({ isActive }) =>
+                `navTo inline-block cursor-pointer transition-colors relative
+      ${isActive ? "text-white after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-white" : "hover:text-white"}`
+              }
+            >
               About Us
-            </a>
+            </NavLink>
           </li>
         </ul>
       </div>

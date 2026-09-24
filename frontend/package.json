@@ -14,6 +14,7 @@
     "@emotion/styled": "^11.14.1",
     "@gsap/react": "^2.1.2",
     "@hookform/resolvers": "^5.9.1",
+    "@monaco-editor/react": "^4.7.0",
     "@mui/material": "^9.4.0",
     "@reduxjs/toolkit": "^2.12.0",
     "@tailwindcss/vite": "^4.3.3",
