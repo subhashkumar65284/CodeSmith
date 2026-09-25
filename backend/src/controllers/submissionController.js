@@ -69,7 +69,7 @@ const submitProblem = async (req, res) => {
 
       if (result.stdout?.trim() !== hiddenTestCases[index].output.trim()) {
         validationError =
-          `Wrong output in ${language}, test case ${index + 1}. ` +
+          `Wrong output in ${language}, test case ${hiddenTestCases[index].input}. ` +
           `Expected: ${hiddenTestCases[index].output}, ` +
           `Got: ${result.stdout}`;
 
@@ -88,8 +88,9 @@ const submitProblem = async (req, res) => {
     if (!languageValid) {
       submittedCode.status = "failed";
       await submittedCode.save();
-
-      return res.status(200).send("Submission failed");
+      return res.status(200).json({
+        result: submittedCode, 
+      });
     }
 
     submittedCode.status = "accepted";
@@ -97,18 +98,20 @@ const submitProblem = async (req, res) => {
 
     //if accepted then let us save it to the problemsSolvedByUser in the userSchema
     // req.user refers to the user in the schema
-    if(!req.user.problemSolved.includes(problemId)){
+    if (!req.user.problemSolved.includes(problemId)) {
       req.user.problemSolved.push(problemId);
       await req.user.save();
     }
 
-    res.status(201).send(submittedCode);
+    res.status(201).json({
+      result: submittedCode,
+    });
   } catch (err) {
     res.status(500).send("Internal server error : " + err);
   }
 };
 
-const runProblem = async (req,res) => {
+const runProblem = async (req, res) => {
   try {
     const userId = req.user._id;
     const problemId = req.params.id;
@@ -124,17 +127,16 @@ const runProblem = async (req,res) => {
       return res.status(404).send("Problem not found");
     }
 
-
     const { visibleTestCases } = foundProblem;
 
     const submissions = getSubmissions(visibleTestCases, language, code);
 
     const submitResult = await submitBatch(submissions);
-    
+
     submitResult.forEach((result, index) => {
-      if(result.stdout?.trim() !== visibleTestCases[index].output.trim()) {
-        result.stderr = 
-          `Wrong Answer` +
+      if (result.stdout?.trim() !== visibleTestCases[index].output.trim()) {
+        result.stderr =
+          `Wrong Answer ` +
           `Expected: ${visibleTestCases[index].output}, ` +
           `Got: ${result.stdout}`;
       }
@@ -143,10 +145,10 @@ const runProblem = async (req,res) => {
     res.status(201).send(submitResult);
   } catch (err) {
     res.status(500).send("Internal server error : " + err);
-  } 
+  }
 };
 
-module.exports = {submitProblem,runProblem};
+module.exports = { submitProblem, runProblem };
 
 //An example of submission result by onecompiler
 // {

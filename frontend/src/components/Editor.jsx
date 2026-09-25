@@ -1,8 +1,9 @@
 import Editor from "@monaco-editor/react";
 import { useRef, useState,useEffect } from "react";
 import { Play, Send, Code2 } from "lucide-react";
+import axiosClient from "../utils/axiosClient";
 
-function EditorArea({ problem }) {
+function EditorArea({ problem, setSubmitResult, setRunResult, setLoadingRun, setLoadingSubmit }) {
   const editorRef = useRef(null);
   const [language, setLanguage] = useState("cpp");
   const [code, setCode] = useState("");
@@ -28,13 +29,40 @@ function EditorArea({ problem }) {
   }
 }, [problem]);
 
-  //   function handleEditorDidMount(editor) {
-  //     editorRef.current = editor;
-  //   }
+    function handleEditorDidMount(editor) {
+      editorRef.current = editor;
+    }
 
-  //   function showValue() {
-  //     alert(editorRef.current.getValue());
-  //   }
+    const onRunClick = async () => {
+      try {
+        setLoadingRun(true);
+        const response = await axiosClient.post(`/submission/run/${problem._id}`, {
+          code: editorRef.current.getValue(),
+          language: language
+        });
+        setRunResult(response.data);
+      } catch (error) {
+        console.error("Run failed:", error);
+      } finally {
+        setLoadingRun(false);
+      }
+    }
+
+    const onSubmitClick = async () => {
+      try {
+        if(setLoadingSubmit) setLoadingSubmit(true);
+        const response = await axiosClient.post(`/submission/submit/${problem._id}`, {
+          code: editorRef.current.getValue(),
+          language: language
+        });
+        setSubmitResult(response.data.result);
+      } catch (error) {
+        console.error("Submit failed:", error);
+      } finally {
+        if(setLoadingSubmit) setLoadingSubmit(false);
+      }
+    }
+
   return (
     <>
       {/* Editor Top Bar */}
@@ -64,11 +92,11 @@ function EditorArea({ problem }) {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-1.5 px-4 py-1.5 bg-slate-700/50 hover:bg-slate-600 text-slate-200 text-sm font-medium rounded-md transition-colors border border-slate-600">
+          <button onClick={onRunClick} className="flex items-center gap-1.5 px-4 py-1.5 bg-slate-700/50 hover:bg-slate-600 text-slate-200 text-sm font-medium rounded-md transition-colors border border-slate-600">
             <Play className="w-4 h-4 text-emerald-400" />
             <span>Run</span>
           </button>
-          <button className="flex items-center gap-1.5 px-4 py-1.5 bg-emerald-600/90 hover:bg-emerald-500 text-white text-sm font-medium rounded-md transition-colors shadow-lg shadow-emerald-900/20">
+          <button onClick={onSubmitClick} className="flex items-center gap-1.5 px-4 py-1.5 bg-emerald-600/90 hover:bg-emerald-500 text-white text-sm font-medium rounded-md transition-colors shadow-lg shadow-emerald-900/20">
             <Send className="w-4 h-4" />
             <span>Submit</span>
           </button>
@@ -76,6 +104,7 @@ function EditorArea({ problem }) {
       </div>
 
       <Editor
+      onMount={handleEditorDidMount}
         language={language}
         value={code || "// some comment"}
         theme="vs-dark"

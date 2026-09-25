@@ -157,12 +157,6 @@ const problemSubmissions = async (req, res) => {
 
     const submissions = await Submission.find({ userId, problemId });
 
-    if (submissions.length == 0) {
-      return res.status(404).json({
-        message: "No submissions for this problem",
-      });
-    }
-
     res.status(200).send(submissions);
   } catch (err) {
     res.status(500).send("Internal Server Error");

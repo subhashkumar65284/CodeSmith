@@ -8,6 +8,10 @@ import EditorArea from "../components/Editor";
 function ProblemPage() {
     const [loadingProblem, setLoadingProblem] = useState(true);
     const [problem, setProblem] = useState(null);
+    const [runResult,setRunResult] = useState([]);
+    const [submitResult,setSubmitResult] = useState(null);
+    const [loadingRun, setLoadingRun] = useState(false);
+    const [loadingSubmit,setLoadingSubmit] = useState(false);
     
     const { Pid } = useParams();
 
@@ -28,7 +32,6 @@ function ProblemPage() {
         fetchProblem();
     }, [Pid]);
 
-    
 
     if (loadingProblem) {
         return (
@@ -52,16 +55,16 @@ function ProblemPage() {
             {/* Left Panel - Problem Details & Testcases */}
             <div className="flex w-1/2 flex-col border-r border-slate-700/50 bg-[#141C2F] shadow-2xl z-10">
                 {/* Top Left - Problem Details */}
-                <ProblemDesc problem={problem}/>
+                <ProblemDesc submitResult={submitResult} problem={problem} loadingSubmit={loadingSubmit}/>
 
                 {/* Bottom Left - Visible Test Cases */}
-                <VisibleCases problem={problem}/>
+                <VisibleCases runResult={runResult} problem={problem} loadingRun={loadingRun} />
             </div>
 
             {/* Right Panel - Code Editor Area */}
             <div className="flex w-1/2 flex-col bg-[#1E1E1E]">
                 {/* Editor Area */}
-                <EditorArea problem={problem}/>
+                <EditorArea setSubmitResult={setSubmitResult} setRunResult={setRunResult} problem={problem} setLoadingRun={setLoadingRun} setLoadingSubmit={setLoadingSubmit} /> 
             </div>
 
         </div>
