@@ -45,6 +45,9 @@ export default function Navbar() {
   const onProblemsClick = () => {
     navigate("/");
   };
+  const onProfileClick = () => {
+    navigate("/profile");
+  };
   return (
     <div
       ref={navRef}
@@ -66,9 +69,6 @@ export default function Navbar() {
           >
             <li>
               <a className="navTo inline-block cursor-pointer">Problems</a>
-            </li>
-            <li>
-              <a className="navTo inline-block cursor-pointer">Resources</a>
             </li>
             <li>
               <a className="navTo inline-block cursor-pointer">About Us</a>
@@ -99,18 +99,6 @@ export default function Navbar() {
           </li>
           <li>
             <NavLink
-              to="/resources"
-              onClick={onProblemsClick}
-              className={({ isActive }) =>
-                `navTo inline-block cursor-pointer transition-colors relative
-      ${isActive ? "text-white after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-white" : "hover:text-white"}`
-              }
-            >
-              Resources
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
               to="/aboutUs"
               onClick={onProblemsClick}
               className={({ isActive }) =>
@@ -126,37 +114,41 @@ export default function Navbar() {
 
       {/* User Profile */}
       <div className="navbar-end shrink-0 w-auto">
-        <div className="dropdown dropdown-end">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn btn-ghost btn-circle avatar flex justify-center items-center hover:bg-white/20 transition-colors"
-          >
-            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
-              <span className="text-2xl">{user.firstName.charAt(0)}</span>
+        {isAuthenticated ? (
+          <div className="dropdown dropdown-end">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn btn-ghost btn-circle avatar flex justify-center items-center hover:bg-white/20 transition-colors"
+            >
+              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                <span className="text-2xl">{user?.firstName?.charAt(0)}</span>
+              </div>
             </div>
-          </div>
 
-          <ul
-            tabIndex={0}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
-          >
-            <li>
-              <a className="justify-between">Profile</a>
-            </li>
-            <li>
-              <a>Settings</a>
-            </li>
-            <li onClick={onLogoutClick}>
-              <a>Logout</a>
-            </li>
-            {user?.role === "admin" ? (
-              <li onClick={onAdminDashboardClick}>
-                <a>Admin Dashboard</a>
+            <ul
+              tabIndex={0}
+              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+            >
+              <li onClick={onProfileClick}>
+                <a className="justify-between cursor-pointer">Profile</a>
               </li>
-            ) : null}
-          </ul>
-        </div>
+              <li onClick={onLogoutClick}>
+                <a>Logout</a>
+              </li>
+              {user?.role === "admin" ? (
+                <li onClick={onAdminDashboardClick}>
+                  <a>Admin Dashboard</a>
+                </li>
+              ) : null}
+            </ul>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <button onClick={() => navigate('/login')} className="btn btn-ghost text-white cursor-pointer">Login</button>
+            <button onClick={() => navigate('/signup')} className="btn bg-indigo-600 text-white border-none hover:bg-indigo-700 cursor-pointer">Sign Up</button>
+          </div>
+        )}
       </div>
     </div>
   );

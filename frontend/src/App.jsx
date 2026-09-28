@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate} from 'react-router';
+import { Routes, Route, Navigate, useLocation } from 'react-router';
 import Home from './pages/Home';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
@@ -11,11 +11,15 @@ import AdminCreateProblem from './pages/AdminCreateProblem';
 import AdminUpdateProblem from './pages/AdminUpdateProblem';
 import AdminDeleteProblem from './pages/AdminDeleteProblem';
 import ProblemPage from './pages/ProblemPage'
+import Profile from './pages/Profile';
+import Landing from './pages/Landing';
 
 function App() {
   const {user,isAuthenticated,loading} = useSelector(state => state.auth);
   const dispatch = useDispatch();
-  let mainStyle = `${isAuthenticated?"min-h-[calc(100vh-4rem)]":"w-screen h-screen"} flex flex-col justify-center items-center`
+  const location = useLocation();
+  const showNavbar = isAuthenticated || location.pathname === '/aboutUs';
+  let mainStyle = `${showNavbar ? "min-h-[calc(100vh-4rem)]" : "w-screen h-screen"} flex flex-col justify-center items-center`
 
   useEffect(()=>{
     dispatch(checkAuth());
@@ -33,7 +37,7 @@ function App() {
 
   return (
     <>
-      {isAuthenticated && <Navbar />}
+      {showNavbar && <Navbar />}
       <main className={mainStyle}> 
   <Routes>
     <Route
@@ -71,6 +75,9 @@ function App() {
 
     {/*Problem Routes*/}
     <Route path='/problem/:Pid' element={isAuthenticated ? <ProblemPage/>:<Navigate to="/signup" />}/>
+    
+    <Route path='/profile' element={isAuthenticated ? <Profile/>:<Navigate to="/login" />}/>
+    <Route path='/aboutUs' element={<Landing />} />
   </Routes>
 </main>
     </>
