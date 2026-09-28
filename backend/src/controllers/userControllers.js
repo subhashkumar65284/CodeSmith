@@ -34,7 +34,11 @@ const register = async (req, res) => {
       problemSolved: user.problemSolved,
     };
 
-    res.cookie("token", token, { maxAge: 7 * 24 * 3600 * 1000 });
+    res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none"
+});
 
     res.status(201).json({
       user: response,
@@ -87,8 +91,10 @@ const login = async (req, res) => {
     };
 
     res.cookie("token", token, {
-      maxAge: 7 * 24 * 3600 * 1000,
-    });
+    httpOnly: true,
+    secure: true,
+    sameSite: "none"
+});
 
     res.status(200).json({
       user: response,
@@ -128,7 +134,11 @@ const adminRegister = async (req, res) => {
       process.env.JWT_KEY,
       { expiresIn: "7d" },
     );
-    res.cookie("token", token, { maxAge: 7 * 24 * 3600 * 1000 });
+    res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none"
+});
     res.status(201).send("User Registered Successfully!");
   } catch (err) {
     res.send("Error : " + err);
