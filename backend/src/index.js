@@ -11,7 +11,7 @@ const userRoute = require("./routes/userRoute");
 const cors = require('cors')
 
 app.use(cors({
-  origin:'https://codesmith-wmzj.onrender.com', 
+  origin:'https://codesmith-frontend.onrender.com', 
   credentials:true
 }))
 app.use(express.json());
